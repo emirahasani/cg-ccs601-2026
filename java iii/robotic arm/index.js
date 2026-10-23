@@ -74,28 +74,55 @@ palm.position.y = 0.9;
 wrist.add(palm);
 
 
+
 const fingers = [];
 
-const fingerGeometry = new THREE.BoxGeometry(0.25, 1, 0.25);
+// Gjatesite e kater gishtave
+const fingerLengths = [0.9, 1.2, 1.05, 0.75];
 
-for (let i = 0; i < 5; i++) {
+// Kater gishtat kryesore
+for (let i = 0; i < 4; i++) {
 
     const fingerJoint = new THREE.Group();
 
-    fingerJoint.position.x = -0.7 + i * 0.35;
+    fingerJoint.position.x = -0.55 + i * 0.37;
     fingerJoint.position.y = 0.75;
 
     palm.add(fingerJoint);
 
+    const fingerGeometry = new THREE.BoxGeometry(
+        0.25,
+        fingerLengths[i],
+        0.25
+    );
 
     const finger = new THREE.Mesh(fingerGeometry, fingerMaterial);
 
+    finger.position.y = fingerLengths[i] / 2;
 
-    finger.position.y = 0.5;
     fingerJoint.add(finger);
 
     fingers.push(fingerJoint);
 }
+
+// Gishti i madh ne anen e majte
+const thumbJoint = new THREE.Group();
+
+thumbJoint.position.set(-0.85, 0.1, 0);
+
+palm.add(thumbJoint);
+
+const thumbGeometry = new THREE.BoxGeometry(0.28, 0.7, 0.28);
+const thumb = new THREE.Mesh(thumbGeometry, fingerMaterial);
+
+thumb.position.y = 0.35;
+
+thumbJoint.rotation.z = THREE.MathUtils.degToRad(50);
+
+thumbJoint.add(thumb);
+
+fingers.push(thumbJoint);
+
 
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -158,6 +185,38 @@ elbow.rotation.z = THREE.MathUtils.degToRad(40);
 wrist.rotation.z = THREE.MathUtils.degToRad(-20);
 
 const rotationStep = THREE.MathUtils.degToRad(5);
+
+
+const fingerStep = THREE.MathUtils.degToRad(5);
+
+// Komandat per levizjen e gishtave
+const fingerKeys = ['1', '2', '3', '4', '5'];
+
+window.addEventListener('keydown', function(event) {
+
+    const index = fingerKeys.indexOf(event.key);
+
+    if (index !== -1) {
+        fingers[index].rotation.x =
+            THREE.MathUtils.clamp(
+                fingers[index].rotation.x + fingerStep,
+                -Math.PI / 2,
+                Math.PI / 2
+            );
+    }
+
+    // Shift + numri e leviz gishtin ne drejtim te kundert
+    if (event.shiftKey && index !== -1) {
+        fingers[index].rotation.x =
+            THREE.MathUtils.clamp(
+                fingers[index].rotation.x - 2 * fingerStep,
+                -Math.PI / 2,
+                Math.PI / 2
+            );
+    }
+
+});
+
 
 window.addEventListener('keydown', function(event) {
 

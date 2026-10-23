@@ -38,7 +38,36 @@ earthMesh.add(moonMesh);
 
 scene.add(earthOrbit);
 
-camera.position.z = 3;
+
+ // Marsi dhe orbita e tij rreth Diellit
+const marsOrbit = new THREE.Object3D();
+
+const marsGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+const marsMaterial = new THREE.MeshStandardMaterial({
+    color: 0xcc4422,
+    wireframe: true
+});
+const marsMesh = new THREE.Mesh(marsGeometry, marsMaterial);
+marsMesh.position.x = 3.5;
+marsOrbit.add(marsMesh);
+
+// Phobos - sateliti i Marsit
+const phobosOrbit = new THREE.Object3D();
+
+const phobosGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+const phobosMaterial = new THREE.MeshStandardMaterial({
+    color: 0xaaaaaa
+});
+const phobosMesh = new THREE.Mesh(phobosGeometry, phobosMaterial);
+phobosMesh.position.x = 0.5;
+
+phobosOrbit.add(phobosMesh);
+marsMesh.add(phobosOrbit);
+
+scene.add(marsOrbit);
+
+
+camera.position.z = 8;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -48,10 +77,13 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 function animate() {
     requestAnimationFrame(animate);
-      controls.update();
+    controls.update();
     sunMesh.rotation.y += 0.01;
     earthOrbit.rotation.y += 0.01;
     earthMesh.rotation.y += 0.02;
+    marsOrbit.rotation.y += 0.006;
+    marsMesh.rotation.y += 0.015;
+    phobosOrbit.rotation.y += 0.04;
     renderer.render(scene, camera);
 }
 animate();
